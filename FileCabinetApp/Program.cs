@@ -9,17 +9,24 @@
         private const int ExplanationHelpIndex = 2;
 
         private static bool isRunning = true;
+        private static FileCabinetService fileCabinetService = new ();
 
         private static Tuple<string, Action<string>>[] commands = new Tuple<string, Action<string>>[]
         {
             new Tuple<string, Action<string>>("help", PrintHelp),
             new Tuple<string, Action<string>>("exit", Exit),
+            new Tuple<string, Action<string>>("stat", Stat),
+            new Tuple<string, Action<string>>("create", Create),
+            new Tuple<string, Action<string>>("list", List),
         };
 
         private static string[][] helpMessages = new string[][]
         {
             new string[] { "help", "prints the help screen", "The 'help' command prints the help screen." },
             new string[] { "exit", "exits the application", "The 'exit' command exits the application." },
+            new string[] { "stat", "prints records statistics", "The 'stat' command prints records statistics." },
+            new string[] { "list", "prints all records", "The 'list' command prints all records." },
+            new string[] { "create", "create new record", "The 'create' command create new record." },
         };
 
         public static void Main(string[] args)
@@ -94,6 +101,67 @@
         {
             Console.WriteLine("Exiting an application...");
             isRunning = false;
+        }
+
+        private static void Stat(string parameters)
+        {
+            var recordsCount = Program.fileCabinetService.GetStat();
+            Console.WriteLine($"{recordsCount} record(s).");
+        }
+
+        private static void Create(string parameters)
+        {
+            var firstName = PromptForInput("First name:");
+            var lastName = PromptForInput("Last name:");
+            var dateOfBirthString = PromptForInput("Date of birth:");
+            var heightString = PromptForInput("Height:");
+            var weightString = PromptForInput("Weight:");
+            var letterString = PromptForInput("Letter:");
+
+            // Check and parse date
+            if (!DateTime.TryParse(dateOfBirthString, out var dateOfBirth))
+            {
+                Console.WriteLine("Invalid date of birth. Please enter a valid date.");
+                return;
+            }
+
+            // Check and parse height
+            if (!short.TryParse(heightString, out var height))
+            {
+                Console.WriteLine("Invalid height. Please enter a valid number.");
+                return;
+            }
+
+            // Check and parse weight
+            if (!short.TryParse(weightString, out var weight))
+            {
+                Console.WriteLine("Invalid weight. Please enter a valid number.");
+                return;
+            }
+
+            // Check and parse letter
+            if (!char.TryParse(letterString, out var letter))
+            {
+                Console.WriteLine("Invalid letter. Please enter a valid number.");
+                return;
+            }
+
+            Program.fileCabinetService.CreateRecord(firstName, lastName, dateOfBirth, height, weight, letter);
+        }
+
+        private static void List(string parameters)
+        {
+            int i = 0;
+            foreach (var record in Program.fileCabinetService.GetRecords())
+            {
+                Console.WriteLine($"#{++i}, {record.FirstName}, {record.LastName}, {record.DateOfBirth}");
+            }
+        }
+
+        private static string PromptForInput(string prompt)
+        {
+            Console.Write(prompt);
+            return Console.ReadLine() ?? string.Empty;
         }
     }
 }

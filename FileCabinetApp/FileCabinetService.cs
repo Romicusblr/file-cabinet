@@ -4,22 +4,32 @@
     {
         private readonly List<FileCabinetRecord> list = new List<FileCabinetRecord>();
 
-        public int CreateRecord(string firstName, string lastName, DateTime dateOfBirth)
+        public int CreateRecord(string firstName, string lastName, DateTime dateOfBirth, short height, decimal weight, char letter)
         {
-            // TODO: добавьте реализацию метода
-            return 0;
+            var record = new FileCabinetRecord
+            {
+                Id = this.list.Count + 1,
+                FirstName = firstName,
+                LastName = lastName,
+                DateOfBirth = dateOfBirth,
+                Height = height,
+                Weight = weight,
+                Letter = letter,
+            };
+
+            this.list.Add(record);
+
+            return record.Id;
         }
 
         public FileCabinetRecord[] GetRecords()
         {
-            // TODO: добавьте реализацию метода
-            return new FileCabinetRecord[] { };
+            return this.list.ToArray();
         }
 
         public int GetStat()
         {
-            // TODO: добавьте реализацию метода
-            return 0;
+            return this.list.Count;
         }
     }
 }
